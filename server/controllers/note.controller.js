@@ -32,3 +32,16 @@ export const addNote = async (req, res) => {
     return res.json({ success: false, message: error.message });
   }
 };
+
+export const getAllNotes = async (req, res) => {
+  try {
+
+    const allNotes = await NoteModel.find({user: req.userId})
+
+
+    return res.json({success: true, message: "All Notes", allNotes});
+
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+}
