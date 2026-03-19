@@ -2,6 +2,7 @@ import NoteModel from "../models/note.model.js";
 
 export const addNote = async (req, res) => {
   try {
+    
     const { title, content, tags } = req.body;
 
     if (!title || !content || !title.trim() || !content.trim()) {
@@ -54,24 +55,20 @@ export const updatePin = async (req, res) => {
       return res.json({ success: false, message: "Note Id is Required!" });
     }
 
-    const note = await NoteModel.findById(noteid);
+    const note = await NoteModel.findOne({_id: noteid, user: userId});
 
     if (!note) {
-      return res.json({
+      return res.status(404).json({
         success: false,
-        message: "No Note found",
+        message: "Note not found or unauthorized",
       });
-    }
-
-    if (note.user.toString() !== userId) {
-      return res.json({ success: false, message: "Unauthorized" });
     }
 
     note.pin = !note.pin;
 
     await note.save();
 
-    return res.json({ success: true, message: "Note Updated", note });
+    return res.json({ success: true, message: "Note Pin Updated", note });
   } catch (error) {
     return res.json({ success: false, message: error.message });
   }
@@ -91,7 +88,7 @@ export const updateNote = async (req, res) => {
     const {title, content, tags} = req.body;
 
     if(!title || !content || !title.trim() || !content.trim()){
-      return res.json({success:false, message: "Title & Content is mnadatory!"})
+      return res.json({success:false, message: "Title & Content is Mandatory!"})
     }
 
      if (tags && !Array.isArray(tags)) {
@@ -101,21 +98,47 @@ export const updateNote = async (req, res) => {
       });
     }
 
-    const note = await NoteModel.findById(noteid);
+    const updatedNote = await NoteModel.findOneAndUpdate(
+      {_id: noteid, user: userId},
+      {
+        title: title.trim(),
+        content: content.trim(),
+        tags: tags || []
+      },
+      { new: true, runValidators: true }
+    );
 
-    if(note.user.toString() !== userId){
-      return res.json({success : false, message: "Unauthorized"})
+    if(!updatedNote){
+      return res.json({success: false, message: "Note not found or unauthorized"})
     }
 
-    const updateNote = await NoteModel.findByIdAndUpdate({_id: noteid}, {title, content, tags}, {new: true});
-
-    if(!updateNote){
-      return res.json({success: false, message: "Note Not Found!"})
-    }
-
-    return res.json({success: true, message: "Note Updated", updateNote})
+    return res.json({success: true, message: "Note Updated", updatedNote})
 
   } catch (error) {
     return res.json({ success: false, message: error.message });
+  }
+}
+
+export const deleteNote = async (req, res) => {
+  try {
+
+    const {noteid} = req.params;
+
+    const userId = req.userId;
+
+    if(!noteid){
+      return res.json({success: false, message: "Note Id Is Required!"})
+    }
+
+    const deletedNote = await NoteModel.findOneAndDelete({_id: noteid, user: userId});
+
+    if(!deletedNote){
+      return res.json({success: false, message: "Note not found or unauthorized"})
+    }
+
+    return res.json({success: true, message: "Note Deleted", deletedNote})
+
+  } catch (error) {
+    return res.json({success: false, message: error.message})
   }
 }
