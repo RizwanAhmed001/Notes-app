@@ -1,22 +1,34 @@
 import NoteModel from "../models/note.model.js";
 
-
 export const addNote = async (req, res) => {
   try {
-    
-    const {title, content, tags} = req.body;
+    const { title, content, tags } = req.body;
 
-    if(!title || !content || tags.length == 0){
-      return res.json({success: false, message: "All Fields Are Mandatory!"})
+    if (!title || !content || !title.trim() || !content.trim()) {
+      return res.json({
+        success: false,
+        message: "Title and Content are required!",
+      });
     }
 
-    const newNote = new NoteModel({title, content, tags});
+    if (tags && !Array.isArray(tags)) {
+      return res.json({
+        success: false,
+        message: "Tags must be an array",
+      });
+    }
+
+    const newNote = new NoteModel({
+      user: req.userId,
+      title: title.trim(),
+      content: content.trim(),
+      tags: tags || [],
+    });
 
     await newNote.save();
 
-    return res.json({success: true, message: "Note Added", newNote})
-
+    return res.json({ success: true, message: "Note Added", newNote });
   } catch (error) {
-    return res.json({success: false, message: error.message})
+    return res.json({ success: false, message: error.message });
   }
-}
+};
