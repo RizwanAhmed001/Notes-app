@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/connectDB.js";
 import userRoute from "./routes/user.route.js";
+import noteRoute from "./routes/note.route.js";
 dotenv.config()
 
 const app = express();
@@ -17,7 +18,8 @@ app.use(cors({
 }));
 
 
-app.use("/api", userRoute)
+app.use("/api", userRoute);
+app.use("/api", noteRoute);
 
 app.get("/", (req, res) => {
   res.send("API WORKING!")
