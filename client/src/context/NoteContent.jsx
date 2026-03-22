@@ -5,8 +5,10 @@ export const NoteContext = createContext({});
 
 const NoteContextProvider = ({children}) => {
 
-  const myValue = {
+  const backendUrl = "http://localhost:4000/api"
 
+  const myValue = {
+    backendUrl
   }
 
   return (
