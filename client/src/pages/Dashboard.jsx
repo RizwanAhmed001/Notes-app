@@ -1,89 +1,21 @@
-// import { useState } from "react";
-// import { FaPlus } from "react-icons/fa6";
-// import { RxCross2 } from "react-icons/rx";
-
-// const Dashboard = () => {
-//   const [addNote, setAddNote] = useState(false);
-
-//   const [tag, setTag] = useState("");
-
-//   const [tagsArray, setTagsArray] = useState([]);
-
-//   const handleTags = () => {
-//     if (!tag.trim()) return;
-
-//     if (tagsArray.includes(tag)) return; // prevent duplicate
-
-//     setTagsArray((prev) => [...prev, tag]);
-//     setTag("");
-//   };
-
-//   const handleDelete = (tag) => {
-//     const newArray = tagsArray.filter((t) => t !== tag);
-//     setTagsArray(newArray);
-//   };
-
-//   return (
-//     <div>
-//       {addNote && (
-//         <div className="fixed top-15">
-//           <button
-//             onClick={() => setAddNote(false)}
-//             className="absolute top-2 right-2"
-//           >
-//             <RxCross2 />
-//           </button>
-//           <label htmlFor="title">Title</label>
-//           <input type="text" id="title" placeholder="Title" />
-//           <label htmlFor="content">Content</label>
-//           <textarea type="text" id="content" placeholder="Content" />
-//           {/* Tags */}
-//           <p>Tags</p>
-//           <div>
-//             {tagsArray.map((tag, index) => (
-//               <span key={index}>
-//                 # {tag} <RxCross2 onClick={() => handleDelete(tag)} />
-//               </span>
-//             ))}
-//           </div>
-//           <div>
-//             <div>
-//               <input
-//                 value={tag}
-//                 onChange={(event) => setTag(event.target.value)}
-//                 type="text"
-//                 placeholder="Add Tags"
-//               />
-//               <button onClick={handleTags}>
-//                 <FaPlus />
-//               </button>
-//             </div>
-//           </div>
-//           <button>Add</button>
-//         </div>
-//       )}
-
-//       {/* Add Note */}
-//       <div
-//         onClick={() => setAddNote(true)}
-//         className="p-5 bg-blue-600 fixed bottom-5 right-5 rounded-xl"
-//       >
-//         <FaPlus className="text-white" />
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Dashboard;
-
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { RxCross2 } from "react-icons/rx";
+import { NoteContext } from "../context/NoteContent";
 
 const Dashboard = () => {
+
+  const {userName, navigate} = useContext(NoteContext);
+
   const [addNote, setAddNote] = useState(false);
   const [tag, setTag] = useState("");
   const [tagsArray, setTagsArray] = useState([]);
+
+  useEffect(() => {
+    if(!userName){
+      navigate("/login")
+    }
+  })
 
   const handleTags = () => {
     if (!tag.trim()) return;
