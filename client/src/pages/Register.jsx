@@ -1,11 +1,12 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { LiaEyeSlashSolid, LiaEyeSolid } from "react-icons/lia";
 import { NoteContext } from "../context/NoteContent";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const Register = () => {
-  const { backendUrl, navigate, setUserName } = useContext(NoteContext);
+  const { backendUrl, navigate, userName, setUserName } =
+    useContext(NoteContext);
 
   const [login, setLogin] = useState(true);
   const [hide, setHide] = useState(true);
@@ -25,6 +26,12 @@ const Register = () => {
     }));
   };
 
+  useEffect(() => {
+    if (userName !== "") {
+      navigate("/");
+    }
+  }, []);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -34,13 +41,13 @@ const Register = () => {
         { name: user.name, email: user.email, password: user.password },
         { withCredentials: true },
       );
-      if(response.data.success){
-        console.log(response)
+      if (response.data.success) {
+        console.log(response);
         localStorage.setItem("name", response.data?.userData.name);
         setUserName(response.data.userData.name);
         navigate("/");
-      }else{
-        toast.error(response.data.message)
+      } else {
+        toast.error(response.data.message);
       }
     } catch (error) {
       toast.error(error.message);

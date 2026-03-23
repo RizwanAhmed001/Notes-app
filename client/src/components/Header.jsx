@@ -1,13 +1,34 @@
-import React, { useContext } from "react";
+import  { useContext } from "react";
 import { NoteContext } from "../context/NoteContent";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const Header = () => {
-  const { userName } = useContext(NoteContext);
+  const { userName, backendUrl, setUserName, navigate } = useContext(NoteContext);
   const initials = userName
   .split(" ")
   .map((word) => word[0])
   .join("")
   .toUpperCase();
+
+  const handleLogout = async () => {
+    try {
+
+      const response = await axios.post(backendUrl + "/logout", {}, {withCredentials: true});
+
+      if(response.data.success){
+        localStorage.removeItem("name");
+        setUserName("");
+        navigate("/login")
+      }else{
+        toast.error("Something Went Wrong!")
+      }
+      
+
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
 
   return (
     <header className="w-full bg-white text-black border-b border-gray-200">
@@ -26,7 +47,7 @@ const Header = () => {
             {/* User Info */}
             <div className="hidden sm:flex flex-col text-right">
               <h3 className="text-xs font-medium">{userName}</h3>
-              <button className="text-xs text-gray-500 hover:text-black">
+              <button onClick={handleLogout} className="text-xs text-gray-500 hover:text-black">
                 Logout
               </button>
             </div>
