@@ -6,8 +6,6 @@ export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    console.log(req.body);
-
     if (!name || !email || !password) {
       return res.json({ success: false, message: "All Fields Are Mandatory!" });
     }
