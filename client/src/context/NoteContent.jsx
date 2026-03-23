@@ -10,11 +10,15 @@ const NoteContextProvider = ({ children }) => {
 
   const [userName, setUserName] = useState(localStorage.getItem("name") || "");
 
+  const [search, setSearch] = useState("");
+
   const myValue = {
     backendUrl,
     navigate,
     userName,
     setUserName,
+    search, 
+    setSearch
   };
 
   return (
