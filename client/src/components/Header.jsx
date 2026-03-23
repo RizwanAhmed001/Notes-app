@@ -3,6 +3,11 @@ import { NoteContext } from "../context/NoteContent";
 
 const Header = () => {
   const { userName } = useContext(NoteContext);
+  const initials = userName
+  .split(" ")
+  .map((word) => word[0])
+  .join("")
+  .toUpperCase();
 
   return (
     <header className="w-full bg-white text-black border-b border-gray-200">
@@ -15,12 +20,12 @@ const Header = () => {
           <div className="flex items-center gap-2">
             {/* Avatar */}
             <button className="w-8 h-8 rounded-full bg-gray-400 text-white text-sm font-semibold flex items-center justify-center">
-              RA
+              {initials}
             </button>
 
             {/* User Info */}
             <div className="hidden sm:flex flex-col text-right">
-              <h3 className="text-xs font-medium">Test User</h3>
+              <h3 className="text-xs font-medium">{userName}</h3>
               <button className="text-xs text-gray-500 hover:text-black">
                 Logout
               </button>

@@ -69,13 +69,27 @@ export const login = async (req, res) => {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: "lax",
-      secure: false
-    })
+      secure: false,
+    });
 
     const userData = { name: emailExist.name };
 
-    return res.json({success: true, message: "User Login", userData})
+    return res.json({ success: true, message: "User Login", userData });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
 
+export const logout = async (req, res) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: false, // true in production (HTTPS)
+    });
+
+    return res.json({success: true, message: "Logged out successfully"});
+    
   } catch (error) {
     return res.json({ success: false, message: error.message });
   }

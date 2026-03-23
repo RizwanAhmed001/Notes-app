@@ -80,7 +80,7 @@ const Register = () => {
         />
 
         {/* Password */}
-        <div className="flex items-center  border border-gray-300  mb-4 px-2">
+        <div className="flex items-center  border border-gray-300  mb-4 pr-2">
           <input
             type={hide ? "password" : "text"}
             value={user.password}
