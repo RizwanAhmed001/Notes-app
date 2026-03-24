@@ -5,28 +5,32 @@ import cookieParser from "cookie-parser";
 import connectDB from "./config/connectDB.js";
 import userRoute from "./routes/user.route.js";
 import noteRoute from "./routes/note.route.js";
-dotenv.config()
+dotenv.config();
 
 const app = express();
 connectDB();
 
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
+
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true
-}));
-
 
 app.use("/api", userRoute);
 app.use("/api", noteRoute);
 
 app.get("/", (req, res) => {
-  res.send("API WORKING!")
-})
+  res.send("API WORKING!");
+});
 
-const port = process.env.PORT || 4000
+const port = process.env.PORT || 4000;
 
 app.listen(port, () => {
-  console.log(`Server Running At Port http://localhost:${port}`)
-})
+  console.log(`Server Running At Port http://localhost:${port}`);
+});

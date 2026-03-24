@@ -27,10 +27,10 @@ const Register = () => {
   };
 
   useEffect(() => {
-    if (userName !== "") {
+    if (userName) {
       navigate("/");
     }
-  }, []);
+  }, [userName]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -38,16 +38,17 @@ const Register = () => {
     try {
       const response = await axios.post(
         backendUrl + (login ? "/login" : "/register"),
-        { name: user.name, email: user.email, password: user.password },
+        user,
         { withCredentials: true },
       );
+
+      console.log(response);
       if (response.data.success) {
-        console.log(response);
         localStorage.setItem("name", response.data?.userData.name);
         setUserName(response.data.userData.name);
         navigate("/");
       } else {
-        toast.error(response.data.message);
+        toast.warning(response.data.message);
       }
     } catch (error) {
       toast.error(error.message);
