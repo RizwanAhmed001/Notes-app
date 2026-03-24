@@ -115,6 +115,8 @@ const Dashboard = () => {
   const handleDeleteNote = async (id) => {
     try {
 
+      if (!window.confirm("Delete this Note?")) return;
+
       const response = await axios.delete(backendUrl + `/deletenote/${id}`, {withCredentials: true});
 
       if(response.data.success){
@@ -146,7 +148,7 @@ const Dashboard = () => {
               key={note._id}
               className="bg-white px-4 py-2 shadow-md hover:shadow-xl transition duration-300 border border-gray-200"
             >
-              {/* Top */}
+
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-lg font-semibold text-gray-800">
                   {note.title}
@@ -154,17 +156,14 @@ const Dashboard = () => {
                 <BsPin onClick={() => handlePin(note._id)} className={`${note.pin ? "text-blue-600" : "text-gray-400"} cursor-pointer`} />
               </div>
 
-              {/* Date */}
               <p className="text-xs text-gray-400 mb-2">
                 {new Date(note.createdAt).toLocaleDateString()}
               </p>
 
-              {/* Content */}
               <p className="text-sm text-gray-600 mb-3 line-clamp-3">
                 {note.content}
               </p>
 
-              {/* Tags */}
               <div className="flex flex-wrap gap-2 mb-3">
                 {note.tags.map((tag, index) => (
                   <span
@@ -176,7 +175,6 @@ const Dashboard = () => {
                 ))}
               </div>
 
-              {/* Actions */}
               <div className="flex justify-end gap-4 text-gray-500">
                 <MdModeEdit className="cursor-pointer hover:text-blue-600" />
                 <MdDelete onClick={() => handleDeleteNote(note._id)} className="cursor-pointer hover:text-red-500" />
@@ -189,12 +187,11 @@ const Dashboard = () => {
       {/* Add Notes */}
       {addNote && (
         <div className="fixed inset-0 bg-black/10 flex items-center justify-center z-50">
-          {/* Modal */}
           <form
             onSubmit={handleSubmit}
             className="bg-white text-black w-100 p-4 rounded relative shadow-lg"
           >
-            {/* Close */}
+
             <button
               onClick={(event) => {
                 (event.preventDefault(), setAddNote(false));
@@ -204,7 +201,6 @@ const Dashboard = () => {
               <RxCross2 />
             </button>
 
-            {/* Title */}
             <label className="text-sm text-gray-400">Title</label>
             <input
               type="text"
@@ -216,7 +212,6 @@ const Dashboard = () => {
               className="w-full text-xl text-gray-400 px-2 py-1 mb-2 outline-none rounded"
             />
 
-            {/* Content */}
             <label className="text-sm text-gray-400">Content</label>
             <textarea
               name="content"
@@ -228,7 +223,6 @@ const Dashboard = () => {
               className="w-full px-2 py-1 mb-2 outline-none bg-gray-100 rounded"
             />
 
-            {/* Tags */}
             <p className="text-sm mb-1 text-gray-400">Tags</p>
 
             <div className="flex flex-wrap gap-1 mb-2">
@@ -246,7 +240,6 @@ const Dashboard = () => {
               ))}
             </div>
 
-            {/* Add Tag */}
             <div className="flex w-15 items-center gap-2 mb-3">
               <input
                 value={tag}
@@ -264,7 +257,6 @@ const Dashboard = () => {
               </span>
             </div>
 
-            {/* Submit */}
             <button className="w-full bg-blue-600 text-white py-1 rounded hover:bg-blue-700">
               Add
             </button>
@@ -272,7 +264,6 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Floating Button */}
       <div
         onClick={() => setAddNote(true)}
         className="p-4 bg-blue-600 fixed bottom-5 right-5 rounded-xl cursor-pointer shadow-lg hover:bg-blue-700"
