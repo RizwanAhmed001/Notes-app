@@ -9,7 +9,8 @@ import { MdDelete } from "react-icons/md";
 import { MdModeEdit } from "react-icons/md";
 
 const Dashboard = () => {
-  const { userName, navigate, backendUrl } = useContext(NoteContext);
+  const { userName, navigate, backendUrl, search, searchOn, setSearchOn } =
+    useContext(NoteContext);
 
   const [addNote, setAddNote] = useState(false);
   const [tag, setTag] = useState("");
@@ -17,10 +18,41 @@ const Dashboard = () => {
 
   const [fetchNotes, setFetchNotes] = useState([]);
 
+  const [searchNotes, setSearchNotes] = useState([]);
+
   const [noteData, setNoteData] = useState({
     title: "",
     content: "",
   });
+
+
+  // I Have to make it
+  useEffect(() => {
+  const filterNotes = async () => {
+    try {
+      // always get fresh data
+      const response = await axios.get(backendUrl + "/getnotes", {
+        withCredentials: true,
+      });
+
+      if (response.data.success) {
+        let notes = response.data.allNotes;
+
+        if (search.trim()) {
+          notes = notes.filter((note) =>
+            note.title.toLowerCase().includes(search.toLowerCase())
+          );
+        }
+
+        setFetchNotes(notes);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    }
+  };
+
+  filterNotes();
+}, [search]);
 
   useEffect(() => {
     if (!userName) {
@@ -97,43 +129,44 @@ const Dashboard = () => {
 
   const handlePin = async (id) => {
     try {
+      const response = await axios.put(
+        backendUrl + `/updatepin/${id}`,
+        {},
+        { withCredentials: true },
+      );
 
-      const response = await axios.put(backendUrl + `/updatepin/${id}`, {}, {withCredentials: true});
-
-      if(response.data.success){
-        toast.success("Note Updated Successfully")
+      if (response.data.success) {
+        toast.success("Note Updated Successfully");
         fetchingNotes();
-      }else{
-        toast.error(response.data.message)
+      } else {
+        toast.error(response.data.message);
       }
-
     } catch (error) {
-       toast.error(error.message);
+      toast.error(error.message);
     }
-  }
+  };
 
   const handleDeleteNote = async (id) => {
     try {
-
       if (!window.confirm("Delete this Note?")) return;
 
-      const response = await axios.delete(backendUrl + `/deletenote/${id}`, {withCredentials: true});
+      const response = await axios.delete(backendUrl + `/deletenote/${id}`, {
+        withCredentials: true,
+      });
 
-      if(response.data.success){
-        toast.error("Note Deleted successfully")
+      if (response.data.success) {
+        toast.error("Note Deleted successfully");
         fetchingNotes();
-      }else{
-        toast.error(response.data.message)
+      } else {
+        toast.error(response.data.message);
       }
-
     } catch (error) {
-       toast.error(error.message);
+      toast.error(error.message);
     }
-  }
+  };
 
   return (
     <div>
-
       {/* Show Data */}
       {fetchNotes.length == 0 ? (
         <div className="text-center mt-10 text-gray-500">
@@ -148,12 +181,14 @@ const Dashboard = () => {
               key={note._id}
               className="bg-white px-4 py-2 shadow-md hover:shadow-xl transition duration-300 border border-gray-200"
             >
-
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-lg font-semibold text-gray-800">
                   {note.title}
                 </h3>
-                <BsPin onClick={() => handlePin(note._id)} className={`${note.pin ? "text-blue-600" : "text-gray-400"} cursor-pointer`} />
+                <BsPin
+                  onClick={() => handlePin(note._id)}
+                  className={`${note.pin ? "text-blue-600" : "text-gray-400"} cursor-pointer`}
+                />
               </div>
 
               <p className="text-xs text-gray-400 mb-2">
@@ -177,7 +212,10 @@ const Dashboard = () => {
 
               <div className="flex justify-end gap-4 text-gray-500">
                 <MdModeEdit className="cursor-pointer hover:text-blue-600" />
-                <MdDelete onClick={() => handleDeleteNote(note._id)} className="cursor-pointer hover:text-red-500" />
+                <MdDelete
+                  onClick={() => handleDeleteNote(note._id)}
+                  className="cursor-pointer hover:text-red-500"
+                />
               </div>
             </div>
           ))}
@@ -191,7 +229,6 @@ const Dashboard = () => {
             onSubmit={handleSubmit}
             className="bg-white text-black w-100 p-4 rounded relative shadow-lg"
           >
-
             <button
               onClick={(event) => {
                 (event.preventDefault(), setAddNote(false));

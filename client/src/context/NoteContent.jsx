@@ -12,13 +12,17 @@ const NoteContextProvider = ({ children }) => {
 
   const [search, setSearch] = useState("");
 
+  const [searchOn, setSearchOn] = useState(false);
+
   const myValue = {
     backendUrl,
     navigate,
     userName,
     setUserName,
     search, 
-    setSearch
+    setSearch,
+    searchOn, 
+    setSearchOn
   };
 
   return (

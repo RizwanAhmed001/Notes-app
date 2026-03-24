@@ -6,7 +6,7 @@ import { IoIosSearch } from "react-icons/io";
 import { useLocation } from "react-router-dom";
 
 const Header = () => {
-  const { userName, backendUrl, setUserName, navigate, search, setSearch } =
+  const { userName, backendUrl, setUserName, navigate, search, setSearch, setSearchOn } =
     useContext(NoteContext);
 
   const location = useLocation();
@@ -38,7 +38,7 @@ const Header = () => {
   };
 
   const handleClick = () => {
-    console.log(search)
+    setSearchOn(true) 
   }
 
   return (
