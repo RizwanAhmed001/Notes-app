@@ -21,6 +21,8 @@ const Dashboard = () => {
 
   const [searchNotes, setSearchNotes] = useState([]);
 
+  const [noSearch, setNoSearch] = useState(false);
+
   const [noteData, setNoteData] = useState({
     title: "",
     content: "",
@@ -39,7 +41,11 @@ const Dashboard = () => {
           notes = notes.filter((note) =>
             note.title.toLowerCase().includes(search.toLowerCase()),
           );
-
+          if (notes.length === 0) {
+            setNoSearch(true);
+          } else {
+            setNoSearch(false);
+          }
           setFetchNotes(notes);
         }
         setFetchNotes(notes);
@@ -165,7 +171,15 @@ const Dashboard = () => {
   return (
     <div>
       {/* Show Data */}
-      {fetchNotes.length == 0 ? (
+
+      {noSearch ? (
+        <div className="flex flex-col items-center justify-center mt-16 text-gray-500">
+          <p className="text-lg font-medium">Oops! No notes found</p>
+          <p className="text-sm text-gray-400 mt-1">
+            Try searching with a different keyword
+          </p>
+        </div>
+      ) : fetchNotes.length === 0 ? (
         <div className="text-center mt-10 text-gray-500">
           Start creating your first note! Click the 'Add' button to jot down
           your thoughts, ideas, and <br />
@@ -182,9 +196,12 @@ const Dashboard = () => {
                 <h3 className="text-lg font-semibold text-gray-800">
                   {note.title}
                 </h3>
+
                 <BsPin
                   onClick={() => handlePin(note._id)}
-                  className={`${note.pin ? "text-blue-600" : "text-gray-400"} cursor-pointer`}
+                  className={`${
+                    note.pin ? "text-blue-600" : "text-gray-400"
+                  } cursor-pointer`}
                 />
               </div>
 
@@ -209,6 +226,7 @@ const Dashboard = () => {
 
               <div className="flex justify-end gap-4 text-gray-500">
                 <MdModeEdit className="cursor-pointer hover:text-blue-600" />
+
                 <MdDelete
                   onClick={() => handleDeleteNote(note._id)}
                   className="cursor-pointer hover:text-red-500"
@@ -218,6 +236,64 @@ const Dashboard = () => {
           ))}
         </div>
       )}
+
+      {/* {fetchNotes.length === 0 ? (
+        <div className="text-center mt-10 text-gray-500">
+          Start creating your first note! Click the 'Add' button to jot down
+          your thoughts, ideas, and <br />
+          reminders. Let's get started!
+        </div>
+      ) : (
+        <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {fetchNotes.map((note) => (
+            <div
+              key={note._id}
+              className="bg-white px-4 py-2 shadow-md hover:shadow-xl transition duration-300 border border-gray-200"
+            >
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-lg font-semibold text-gray-800">
+                  {note.title}
+                </h3>
+
+                <BsPin
+                  onClick={() => handlePin(note._id)}
+                  className={`${
+                    note.pin ? "text-blue-600" : "text-gray-400"
+                  } cursor-pointer`}
+                />
+              </div>
+
+              <p className="text-xs text-gray-400 mb-2">
+                {new Date(note.createdAt).toLocaleDateString()}
+              </p>
+
+              <p className="text-sm text-gray-600 mb-3 line-clamp-3">
+                {note.content}
+              </p>
+
+              <div className="flex flex-wrap gap-2 mb-3">
+                {note.tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="text-xs text-gray-400 px-1 py-1 rounded-md"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+
+              <div className="flex justify-end gap-4 text-gray-500">
+                <MdModeEdit className="cursor-pointer hover:text-blue-600" />
+
+                <MdDelete
+                  onClick={() => handleDeleteNote(note._id)}
+                  className="cursor-pointer hover:text-red-500"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      )} */}
 
       {/* Add Notes */}
       {addNote && (
