@@ -28,6 +28,9 @@ const Dashboard = () => {
     content: "",
   });
 
+  const [editOn, setEditOn] = useState(false);
+  const [editId, setEditId] = useState("");
+
   // I Have to make it
   useEffect(() => {
     const searchFetch = async () => {
@@ -168,6 +171,35 @@ const Dashboard = () => {
     }
   };
 
+  const handelEdit = (note) => {
+    setEditOn(true);
+    setNoteData({ title: note.title, content: note.content });
+    setTagsArray(note.tags);
+    setAddNote(true);
+    setEditId(note._id);
+  };
+
+  const updateEdit = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await axios.put(backendUrl + `/updatenote/${editId}`, {title: noteData.title, content: noteData.content, tags: tagsArray}, {withCredentials: true});
+
+      if(response.data.success){
+        setEditOn(false)
+        setEditId("");
+        setTagsArray([]);
+        setAddNote(false);
+        setNoteData({title: "", content: ""});
+        fetchingNotes();
+      }else{
+        toast.warning(response.data.message)
+      }
+      console.log(response);
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
   return (
     <div>
       {/* Show Data */}
@@ -225,7 +257,10 @@ const Dashboard = () => {
               </div>
 
               <div className="flex justify-end gap-4 text-gray-500">
-                <MdModeEdit className="cursor-pointer hover:text-blue-600" />
+                <MdModeEdit
+                  onClick={() => handelEdit(note)}
+                  className="cursor-pointer hover:text-blue-600"
+                />
 
                 <MdDelete
                   onClick={() => handleDeleteNote(note._id)}
@@ -236,64 +271,6 @@ const Dashboard = () => {
           ))}
         </div>
       )}
-
-      {/* {fetchNotes.length === 0 ? (
-        <div className="text-center mt-10 text-gray-500">
-          Start creating your first note! Click the 'Add' button to jot down
-          your thoughts, ideas, and <br />
-          reminders. Let's get started!
-        </div>
-      ) : (
-        <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {fetchNotes.map((note) => (
-            <div
-              key={note._id}
-              className="bg-white px-4 py-2 shadow-md hover:shadow-xl transition duration-300 border border-gray-200"
-            >
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-lg font-semibold text-gray-800">
-                  {note.title}
-                </h3>
-
-                <BsPin
-                  onClick={() => handlePin(note._id)}
-                  className={`${
-                    note.pin ? "text-blue-600" : "text-gray-400"
-                  } cursor-pointer`}
-                />
-              </div>
-
-              <p className="text-xs text-gray-400 mb-2">
-                {new Date(note.createdAt).toLocaleDateString()}
-              </p>
-
-              <p className="text-sm text-gray-600 mb-3 line-clamp-3">
-                {note.content}
-              </p>
-
-              <div className="flex flex-wrap gap-2 mb-3">
-                {note.tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="text-xs text-gray-400 px-1 py-1 rounded-md"
-                  >
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-
-              <div className="flex justify-end gap-4 text-gray-500">
-                <MdModeEdit className="cursor-pointer hover:text-blue-600" />
-
-                <MdDelete
-                  onClick={() => handleDeleteNote(note._id)}
-                  className="cursor-pointer hover:text-red-500"
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      )} */}
 
       {/* Add Notes */}
       {addNote && (
@@ -367,9 +344,15 @@ const Dashboard = () => {
               </span>
             </div>
 
-            <button className="w-full bg-blue-600 text-white py-1 rounded hover:bg-blue-700">
-              Add
-            </button>
+            {editOn ? (
+              <button onClick={updateEdit} className="w-full bg-blue-600 text-white py-1 rounded hover:bg-blue-700">
+                Update
+              </button>
+            ) : (
+              <button className="w-full bg-blue-600 text-white py-1 rounded hover:bg-blue-700">
+                Add
+              </button>
+            )}
           </form>
         </div>
       )}
