@@ -9,8 +9,9 @@ import { MdDelete } from "react-icons/md";
 import { MdModeEdit } from "react-icons/md";
 
 const Dashboard = () => {
-  const { userName, navigate, backendUrl, search, searchOn, setSearchOn } =
-    useContext(NoteContext);
+  const { userName, navigate, backendUrl, search } = useContext(NoteContext);
+
+  console.log(search);
 
   const [addNote, setAddNote] = useState(false);
   const [tag, setTag] = useState("");
@@ -25,34 +26,30 @@ const Dashboard = () => {
     content: "",
   });
 
-
   // I Have to make it
   useEffect(() => {
-  const filterNotes = async () => {
-    try {
-      // always get fresh data
-      const response = await axios.get(backendUrl + "/getnotes", {
-        withCredentials: true,
-      });
-
-      if (response.data.success) {
+    const searchFetch = async () => {
+      try {
+        const response = await axios.get(backendUrl + "/getnotes", {
+          withCredentials: true,
+        });
         let notes = response.data.allNotes;
-
+        setSearchNotes(notes);
         if (search.trim()) {
           notes = notes.filter((note) =>
-            note.title.toLowerCase().includes(search.toLowerCase())
+            note.title.toLowerCase().includes(search.toLowerCase()),
           );
+
+          setFetchNotes(notes);
         }
-
         setFetchNotes(notes);
+      } catch (error) {
+        toast.error(error.message);
       }
-    } catch (error) {
-      toast.error(error.response?.data?.message || error.message);
-    }
-  };
+    };
 
-  filterNotes();
-}, [search]);
+    searchFetch();
+  }, [search]);
 
   useEffect(() => {
     if (!userName) {

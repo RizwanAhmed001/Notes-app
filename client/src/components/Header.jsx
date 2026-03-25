@@ -6,7 +6,7 @@ import { IoIosSearch } from "react-icons/io";
 import { useLocation } from "react-router-dom";
 
 const Header = () => {
-  const { userName, backendUrl, setUserName, navigate, search, setSearch, setSearchOn } =
+  const { userName, backendUrl, setUserName, navigate, search, setSearch } =
     useContext(NoteContext);
 
   const location = useLocation();
@@ -37,10 +37,6 @@ const Header = () => {
     }
   };
 
-  const handleClick = () => {
-    setSearchOn(true) 
-  }
-
   return (
     <header className="w-full bg-white text-black border-b border-gray-200">
       <div className="flex items-center px-2 py-3">
@@ -61,7 +57,7 @@ const Header = () => {
                 placeholder="Search Notes"
                 className="w-full outline-none text-gray-600 text-sm"
               />
-              <IoIosSearch onClick={handleClick} className="text-lg" />
+              <IoIosSearch className="text-lg" />
             </div>
           )}
         </div>
