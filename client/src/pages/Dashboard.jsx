@@ -29,35 +29,6 @@ const Dashboard = () => {
   const [editOn, setEditOn] = useState(false);
   const [editId, setEditId] = useState("");
 
-  // I Have to make it
-  // useEffect(() => {
-  //   const searchFetch = async () => {
-  //     try {
-  //       const response = await axios.get(backendUrl + "/getnotes", {
-  //         withCredentials: true,
-  //       });
-  //       let notes = response.data.allNotes;
-  //       setSearchNotes(notes);
-  //       if (search.trim()) {
-  //         notes = notes.filter((note) =>
-  //           note.title.toLowerCase().includes(search.toLowerCase()),
-  //         );
-  //         if (notes.length === 0) {
-  //           setNoSearch(true);
-  //         } else {
-  //           setNoSearch(false);
-  //         }
-  //         setFetchNotes(notes);
-  //       }
-  //       setFetchNotes(notes);
-  //     } catch (error) {
-  //       toast.error(error.message);
-  //     }
-  //   };
-
-  //   searchFetch();
-  // }, [search]);
-
   const handlingSearch = () => {
     if (!search.trim()) {
       setFetchNotes(searchNotes);
@@ -101,6 +72,7 @@ const Dashboard = () => {
     } catch (error) {
       toast.error(error.message);
     }
+    console.log("fetch")
   };
 
   useEffect(() => {
