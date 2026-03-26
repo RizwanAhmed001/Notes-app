@@ -1,9 +1,11 @@
 import { ToastContainer } from "react-toastify";
 import { Route, Routes } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
-import Error from "./pages/Error";
-import Header from "./components/Header";
-import Register from "./pages/Register";
+import { lazy } from "react";
+const Error = lazy(() => (import("./pages/Error")))
+const Dashboard = lazy(() => (import("./pages/Dashboard")))
+const Header = lazy(() => (import("./components/Header")))
+const Register = lazy(() => (import("./pages/Register")))
+
 
 function App() {
   return (
