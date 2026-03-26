@@ -30,7 +30,7 @@ export const register = async (req, res) => {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: "lax",
-      secure: false,
+      secure: true,
     });
 
     const userData = { name: newUser.name };
@@ -85,7 +85,7 @@ export const logout = async (req, res) => {
     res.clearCookie("token", {
       httpOnly: true,
       sameSite: "lax",
-      secure: false, // true in production (HTTPS)
+      secure: true,
     });
 
     return res.json({success: true, message: "Logged out successfully"});
