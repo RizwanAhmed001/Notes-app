@@ -69,7 +69,7 @@ export const login = async (req, res) => {
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: "lax",
-      secure: false,
+      secure: true,
     });
 
     const userData = { name: emailExist.name };
