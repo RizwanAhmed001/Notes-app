@@ -11,8 +11,6 @@ import { MdModeEdit } from "react-icons/md";
 const Dashboard = () => {
   const { userName, navigate, backendUrl, search } = useContext(NoteContext);
 
-  console.log(search);
-
   const [addNote, setAddNote] = useState(false);
   const [tag, setTag] = useState("");
   const [tagsArray, setTagsArray] = useState([]);
@@ -32,33 +30,56 @@ const Dashboard = () => {
   const [editId, setEditId] = useState("");
 
   // I Have to make it
-  useEffect(() => {
-    const searchFetch = async () => {
-      try {
-        const response = await axios.get(backendUrl + "/getnotes", {
-          withCredentials: true,
-        });
-        let notes = response.data.allNotes;
-        setSearchNotes(notes);
-        if (search.trim()) {
-          notes = notes.filter((note) =>
-            note.title.toLowerCase().includes(search.toLowerCase()),
-          );
-          if (notes.length === 0) {
-            setNoSearch(true);
-          } else {
-            setNoSearch(false);
-          }
-          setFetchNotes(notes);
-        }
-        setFetchNotes(notes);
-      } catch (error) {
-        toast.error(error.message);
-      }
-    };
+  // useEffect(() => {
+  //   const searchFetch = async () => {
+  //     try {
+  //       const response = await axios.get(backendUrl + "/getnotes", {
+  //         withCredentials: true,
+  //       });
+  //       let notes = response.data.allNotes;
+  //       setSearchNotes(notes);
+  //       if (search.trim()) {
+  //         notes = notes.filter((note) =>
+  //           note.title.toLowerCase().includes(search.toLowerCase()),
+  //         );
+  //         if (notes.length === 0) {
+  //           setNoSearch(true);
+  //         } else {
+  //           setNoSearch(false);
+  //         }
+  //         setFetchNotes(notes);
+  //       }
+  //       setFetchNotes(notes);
+  //     } catch (error) {
+  //       toast.error(error.message);
+  //     }
+  //   };
 
-    searchFetch();
-  }, [search]);
+  //   searchFetch();
+  // }, [search]);
+
+  const handlingSearch = () => {
+    if (!search.trim()) {
+      setFetchNotes(searchNotes);
+      return;
+    }
+
+    const filtered = searchNotes.filter((note) =>
+      note.title?.toLowerCase().includes(search.toLowerCase()),
+    );
+
+    if (filtered.length === 0) {
+      setNoSearch(true);
+    } else {
+      setNoSearch(false);
+    }
+
+    setFetchNotes(filtered);
+  };
+
+  useEffect(() => {
+    handlingSearch();
+  }, [search, searchNotes]);
 
   useEffect(() => {
     if (!userName) {
@@ -73,6 +94,7 @@ const Dashboard = () => {
       });
       if (response.data.success) {
         setFetchNotes(response.data.allNotes);
+        setSearchNotes(response.data.allNotes);
       } else {
         toast.error(response.data.message);
       }
@@ -182,23 +204,28 @@ const Dashboard = () => {
   const updateEdit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.put(backendUrl + `/updatenote/${editId}`, {title: noteData.title, content: noteData.content, tags: tagsArray}, {withCredentials: true});
+      const response = await axios.put(
+        backendUrl + `/updatenote/${editId}`,
+        { title: noteData.title, content: noteData.content, tags: tagsArray },
+        { withCredentials: true },
+      );
 
-      if(response.data.success){
-        setEditOn(false)
+      if (response.data.success) {
+        setEditOn(false);
         setEditId("");
         setTagsArray([]);
         setAddNote(false);
-        setNoteData({title: "", content: ""});
+        setNoteData({ title: "", content: "" });
         fetchingNotes();
-      }else{
-        toast.warning(response.data.message)
+        toast.success("Note Edited");
+      } else {
+        toast.warning(response.data.message);
       }
       console.log(response);
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.message);
     }
-  }
+  };
 
   return (
     <div>
@@ -345,7 +372,10 @@ const Dashboard = () => {
             </div>
 
             {editOn ? (
-              <button onClick={updateEdit} className="w-full bg-blue-600 text-white py-1 rounded hover:bg-blue-700">
+              <button
+                onClick={updateEdit}
+                className="w-full bg-blue-600 text-white py-1 rounded hover:bg-blue-700"
+              >
                 Update
               </button>
             ) : (
